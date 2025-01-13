@@ -143,18 +143,24 @@ def get_client_username(
             "settings.AXES_USERNAME_CALLABLE needs to be a string, callable, or None."
         )
 
+        # are there any other settings we should check for?
+    if settings.AXES_USERNAME_FORM_FIELD:
+        username_field = settings.AXES_USERNAME_FORM_FIELD
+    else:
+        username_field = settings.USERNAME_FIELD
+
     if credentials:
         log.debug(
-            "Using parameter credentials to get username with key settings.AXES_USERNAME_FORM_FIELD"
+            "Using parameter credentials to get username with key settings.%s", username_field
         )
-        return credentials.get(settings.AXES_USERNAME_FORM_FIELD, None)
+        return credentials.get(username_field, None)
 
     log.debug(
-        "Using parameter request.POST to get username with key settings.AXES_USERNAME_FORM_FIELD"
+        "Using parameter request.POST to get username with key settings. %s", username_field
     )
 
     request_data = getattr(request, "data", request.POST)
-    return request_data.get(settings.AXES_USERNAME_FORM_FIELD, None)
+    return request_data.get(username_field, None)
 
 
 def get_client_ip_address(
